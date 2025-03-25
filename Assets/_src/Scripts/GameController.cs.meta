@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: c250e16540aab114abe2599f6b48a69a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - GameManager: {instanceID: 0}
+  - gameLog: {instanceID: 0}
+  - deck: {instanceID: 0}
+  - dealer: {instanceID: 0}
+  - playerPrefab: {fileID: 3379269888617051871, guid: 0b58231ec1bc1b64f8bd9c4e0cbb20ad,
+      type: 3}
+  - spawnPosition1: {instanceID: 0}
+  - spawnPosition2: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
