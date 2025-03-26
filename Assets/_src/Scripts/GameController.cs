@@ -7,7 +7,6 @@ using System;
 
 public class GameController : MonoBehaviourPunCallbacks
 {
-    public GameManager GameManager;
     public GameLog gameLog;
     public Deck deck;
     public Dealer dealer;
@@ -27,61 +26,24 @@ public class GameController : MonoBehaviourPunCallbacks
         }
         if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
         {
-            Player player = new Player();
-            players.Add(player);
-            hasChanges = true;
+            addPlayer();
         }
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
         if (PhotonNetwork.IsMasterClient)
         {
+            addPlayer();
+        }
+    }
+    void addPlayer()
+    {
             Player player = new Player();
             players.Add(player);
-            hasChanges = true;
-        }
     }
-    void Update()
-    {   
-        if (!hasChanges) return;
-        if (players.Count < 2) GameGameState(GameState.WAITING_PLAYERS);
-        if (players.Count >= 2) GameGameState(GameState.READY_TO_PLAY);
-        hasChanges = false;
-    }
-
-
-    public void GameGameState(GameState gameState)
-    {
-        switch (gameState)
-        {
-            case GameState.WAITING_PLAYERS:
-                gameLog.changeText("Aguardando Jogadores");
-                break;
-            case GameState.READY_TO_PLAY:
-                gameLog.changeText("Iniciando Jogo");
-                StartGame();
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void SetPlayer(Player player) 
-    { 
-        hasChanges = true;
-    }
-
     public void SetPlayersHands(HandCardManager hand) 
     { 
         playerHands.Add(hand); 
     }
-    
-    private void StartGame()
-    {
-        dealer.DealCards(cardsPerPlayer, deck, playerHands);
-        if (PhotonNetwork.IsMasterClient)
-        {
-            GameManager.StartGame(players);
-        }
-    }
 }
+    

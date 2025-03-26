@@ -7,7 +7,7 @@ public enum Step { INIT_GAME, END_GAME, INIT_ROUND, END_ROUND, INIT_TURN, END_TU
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GameController gameController;
+    /* [SerializeField] private GameController gameController;
     [SerializeField] private Round round;
     private List<Player> players;
     private void OnEnable() { Card.OnCardLaunched += OnCardLaunchedHandler; }
@@ -22,40 +22,7 @@ public class GameManager : MonoBehaviour
         round.Initialize(3, players);
         GameStep(Step.INIT_GAME, null);
     }
-    public void GameStep(Step gameStep, Player player)
-    {
-        switch (gameStep)
-        {
-            case Step.INIT_GAME:
-                gameController.gameLog.changeText("Início de jogo");
-                StartCoroutine(StartCountdown());
-                break;
-            case Step.INIT_TURN:    
-                gameController.gameLog.AnnouncePlayer(player.nickname);
-                player.isTurn = true;
-                break;
-            case Step.END_TURN:    
-                player.isTurn = false;
-                DetermineNextPlayer(player);
-                break;
-            default:
-                break;
-        }
-    }
-    private IEnumerator StartCountdown()
-    {   
-        gameController.gameLog.changeText("Iniciando o Jogo em 3");
-        yield return new WaitForSeconds(1f);
-        gameController.gameLog.changeText("Iniciando o Jogo em 2");
-        yield return new WaitForSeconds(1f);
-        gameController.gameLog.changeText("Iniciando o Jogo em 1");
-        yield return new WaitForSeconds(1f);
-
-        Player player = FindInitialPlayer();
-
-        if (player != null) { GameStep(Step.INIT_TURN, player); }
-        else { Debug.LogError("Jogador inicial não encontrado!"); }
-    }
+    
 
     private Player FindInitialPlayer()
     {
@@ -82,5 +49,5 @@ public class GameManager : MonoBehaviour
 
         //round.SetCurrentPlayerToPlay(players[nextIndex].playerId);
         GameStep(Step.INIT_TURN, players[nextIndex]);
-    }
+    } */
 } 

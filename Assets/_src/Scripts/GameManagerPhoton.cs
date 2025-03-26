@@ -1,13 +1,15 @@
 using UnityEngine;
 using Photon.Pun;
+using System.Collections;
 
-public enum GameState { WAITING_PLAYERS, READY_TO_PLAY, DEALING_CARDS }
+public enum GameState { WAITING_PLAYERS, READY_TO_PLAY, STARTING_THE_GAME, DEALING_CARDS }
 
 public class GameManagerPhoton : MonoBehaviourPun
 {
+    public GameController gameController;
     public static GameManagerPhoton Instance;
     public GameState gameState;
-
+    
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -21,34 +23,45 @@ public class GameManagerPhoton : MonoBehaviourPun
         }
     }
 
+    void Update()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if (gameController.players.Count >= 2 && gameState == GameState.WAITING_PLAYERS)
+            {
+                photonView.RPC("UpdateGameState", RpcTarget.AllBuffered, GameState.READY_TO_PLAY);
+            }
+        }
+    }
+    
     public void StartGame()
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            // Iniciar com o estado de espera dos jogadores
-            UpdateGameState(GameState.WAITING_PLAYERS);
+            photonView.RPC("UpdateGameState", RpcTarget.AllBuffered, GameState.WAITING_PLAYERS);
         }
     }
 
-    // Método para atualizar o estado do jogo
     [PunRPC]
     public void UpdateGameState(GameState newState)
     {
         gameState = newState;
-        // Log para depuração
         Debug.Log("Novo estado do jogo: " + gameState);
 
-        // Baseado no novo estado, você pode iniciar novas ações
         switch (newState)
         {
             case GameState.WAITING_PLAYERS:
-                // Aqui você pode colocar lógica adicional quando o estado for "WAITING_PLAYERS"
+                gameController.gameLog.changeText("Aguardando Jogadores...");
                 break;
             case GameState.READY_TO_PLAY:
-                // Aqui você pode iniciar a lógica para o jogo começar
+                gameController.gameLog.changeText("Adversário encontrado! O jogo vai iniciar em instantes...");
+                break;
+            case GameState.STARTING_THE_GAME:
+                StartCoroutine(gameController.gameLog.StartCountdown());
+                photonView.RPC("UpdateGameState", RpcTarget.AllBuffered, GameState.DEALING_CARDS);
                 break;
             case GameState.DEALING_CARDS:
-                // Aqui você pode começar a distribuir as cartas
+                gameController.gameLog.changeText("Distribuindo Cartas...");
                 break;
         }
     }
