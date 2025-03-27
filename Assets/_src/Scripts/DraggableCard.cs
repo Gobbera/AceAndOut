@@ -17,29 +17,20 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         canvas = GetComponentInParent<Canvas>();
 
     }
-
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (!card.origem.view.IsMine) return;
-        if (card.cardInDropZone) return;
-
+        if (!card.origem || !card.origem.view.IsMine || card.cardInDropZone) return;
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.8f;
     }
-
     public void OnDrag(PointerEventData eventData)
     {
-        if (!card.origem.view.IsMine) return;
-        if (card.cardInDropZone) return;
-
+        if (!card.origem || !card.origem.view.IsMine || card.cardInDropZone) return;
         rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
     }
-
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (!card.origem.view.IsMine) return;
-        if (card.cardInDropZone) return;
-
+        if (!card.origem || !card.origem.view.IsMine || card.cardInDropZone) return;
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
     }

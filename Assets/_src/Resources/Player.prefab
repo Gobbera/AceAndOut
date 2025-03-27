@@ -53,7 +53,7 @@ MonoBehaviour:
   view: {fileID: -3313685232552745333}
   handCardManager: {fileID: 2824524521441814758}
   dropZone: {fileID: 0}
-  playerIndex: 0
+  ActorNumber: 0
   nickname: 
   isDealer: 0
   isTurn: 0
@@ -75,8 +75,7 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents:
-  - {fileID: 0}
+  ObservedComponents: []
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

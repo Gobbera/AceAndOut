@@ -12,7 +12,6 @@ public class Deck : MonoBehaviour
         availableCards = new List<CardData>(cardDataList);
         InstantiateDeck();
     }
-
     private void InstantiateDeck()
     {
         foreach (CardData cardData in availableCards)
@@ -27,21 +26,16 @@ public class Deck : MonoBehaviour
             }
         }
     }
-
-
     public List<CardData> GetCards()
     {
         return availableCards;
-    }
-
-    
+    }   
     public CardData RemoveCardData()
     {
         if (availableCards.Count > 0)
         {
             CardData cardData = availableCards[0];
             availableCards.RemoveAt(0);
-            
             
             Transform cardVisual = transform.Find(cardData.name);
             if (cardVisual != null)
