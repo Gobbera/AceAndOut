@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 6735309853120860783}
   - component: {fileID: 5562704627910161045}
   - component: {fileID: -3313685232552745333}
+  - component: {fileID: 8153482179668345424}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Remote Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -51,6 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   view: {fileID: -3313685232552745333}
+  tablePosition: {fileID: 8153482179668345424}
   handCardManager: {fileID: 2824524521441814758}
   dropZone: {fileID: 0}
   ActorNumber: 0
@@ -79,6 +81,20 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &8153482179668345424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3379269888617051871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03ebe4a098fd4ac4b9d410714439f564, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clientPlayerTransform: {fileID: 0}
+  remotePlayerTransform: {fileID: 0}
 --- !u!1 &7053886841323647116
 GameObject:
   m_ObjectHideFlags: 0
