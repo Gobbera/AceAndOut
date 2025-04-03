@@ -4,8 +4,9 @@ using UnityEngine;
 using Photon.Pun;
 using System.Linq;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviourPun
 {
+    public GameManagerPhoton GMPhoton;
     public PhotonView view;
     public TablePositions tablePosition;
     public HandCardManager handCardManager;
@@ -16,6 +17,7 @@ public class Player : MonoBehaviour
     public bool isTurn;
     void Start()
     {
+        GMPhoton = GameObject.Find("GameManagerPhoton").GetComponent<GameManagerPhoton>();
         StartCoroutine(DelayedStart());
     }
     IEnumerator DelayedStart()
@@ -27,6 +29,10 @@ public class Player : MonoBehaviour
         transform.SetParent(spawnPosition);
         transform.position = spawnPosition.position;
         handCardManager.Initialize(this);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            GMPhoton.AddPlayerObj(this);
+        }
     }
     public Transform GetViewPosition(PhotonView playerView)
     {

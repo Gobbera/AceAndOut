@@ -131,31 +131,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 200199722}
-  - component: {fileID: 200199721}
+  - component: {fileID: 200199723}
+  - component: {fileID: 200199724}
   m_Layer: 0
-  m_Name: 'GameManagerPhoton '
+  m_Name: GameManagerPhoton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &200199721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 200199719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1358f5c3f346914591be80ff36f4221, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameController: {fileID: 1436247877}
-  players: []
-  playerHands: []
-  gameState: 0
-  hasChanges: 0
 --- !u!4 &200199722
 Transform:
   m_ObjectHideFlags: 0
@@ -171,6 +155,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &200199723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200199719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1358f5c3f346914591be80ff36f4221, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameController: {fileID: 1436247877}
+  players: []
+  playerHands: []
+  playerCount: 0
+  gameState: 0
+  deck: {fileID: 555125046}
+  dealer: {fileID: 1990369266}
+  cardsPerPlayer: 3
+  hasChanges: 0
+--- !u!114 &200199724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200199719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &405889460
 GameObject:
   m_ObjectHideFlags: 0
@@ -601,7 +628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cf062f4783be1e4a9545b1d05b31468, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GMPhoton: {fileID: 200199721}
+  GMPhoton: {fileID: 200199723}
   playerPrefab: {fileID: 3379269888617051871, guid: 0b58231ec1bc1b64f8bd9c4e0cbb20ad,
     type: 3}
 --- !u!4 &1241485283
@@ -742,7 +769,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c250e16540aab114abe2599f6b48a69a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GMPhoton: {fileID: 200199721}
+  GMPhoton: {fileID: 200199723}
   gameLog: {fileID: 1510487498}
   deck: {fileID: 555125046}
   dealer: {fileID: 1990369266}

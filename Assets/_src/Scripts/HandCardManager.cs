@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class HandCardManager : MonoBehaviour
 {
+    public GameManagerPhoton GMPhoton;
     [SerializeField] private Player player;
     [SerializeField] private GameObject cardPrefab;
     private RectTransform handsCardGroup;

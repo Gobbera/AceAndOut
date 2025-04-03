@@ -19,11 +19,7 @@ public class GameController : MonoBehaviourPunCallbacks
 
     public void DealCards()
     {
-        dealer.DealCards(cardsPerPlayer, deck, playerHands);
-    }
-    public void SetPlayersHands(HandCardManager hand) 
-    { 
-        playerHands.Add(hand); 
+        dealer.DealCards(cardsPerPlayer, deck, GMPhoton.playerHands);
     }
 }
     

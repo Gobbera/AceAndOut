@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e995e0a4f806154f83aca6ad0c49f7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GMPhoton: {fileID: 0}
   view: {fileID: -3313685232552745333}
   tablePosition: {fileID: 8153482179668345424}
   handCardManager: {fileID: 2824524521441814758}
@@ -183,6 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3376f036998ad34caf78c8be7a69ad1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GMPhoton: {fileID: 0}
   player: {fileID: 5562704627910161045}
   cardPrefab: {fileID: 3104230083025913918, guid: 8ae5ea012587df849acbddb74e885110,
     type: 3}
