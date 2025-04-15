@@ -16,10 +16,5 @@ public class GameController : MonoBehaviourPunCallbacks
     public GameObject playerPrefab;
     public int cardsPerPlayer = 3;
     public bool hasChanges;
-
-    public void DealCards()
-    {
-        dealer.DealCards(cardsPerPlayer, deck, GMPhoton.playerHands);
-    }
 }
     

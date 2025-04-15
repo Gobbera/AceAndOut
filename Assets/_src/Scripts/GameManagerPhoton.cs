@@ -70,14 +70,16 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     }
     private void ChangeState(GameState newState)
     {
-        photonView.RPC("UpdateGameState", RpcTarget.AllBuffered, (int)newState);
+        if (PhotonNetwork.IsMasterClient) 
+        {
+            photonView.RPC("UpdateGameState", RpcTarget.AllBuffered, (int)newState);
+        }
     }
-
     [PunRPC]
     public void UpdateGameState(int newStateInt)
     {
         gameState = (GameState)newStateInt;
-        Debug.Log("Novo estado do jogo: " + gameState);
+        Debug.Log($"[GameManagerPhoton] Novo estado do jogo: {gameState}");
 
         switch (gameState)
         {
@@ -86,14 +88,20 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
                 break;
             case GameState.READY_TO_PLAY:
                 gameController.gameLog.changeText("Adversário encontrado! O jogo vai iniciar em instantes...");
-                NotifyChange();
+                if (PhotonNetwork.IsMasterClient) 
+                {
+                    NotifyChange();
+                }
                 break;
             case GameState.STARTING_THE_GAME:
                 StartCoroutine(StartCountdown());
                 break;
             case GameState.DEALING_CARDS:
                 gameController.gameLog.changeText("Distribuindo Cartas...");
-                gameController.DealCards();
+                if (PhotonNetwork.IsMasterClient) 
+                {
+                    DealCards();
+                }
                 break;
         }
     }
@@ -127,8 +135,11 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     }
     public void InstanceRemotePlayer(Photon.Realtime.Player newPlayer)
     {
-        playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
-        NotifyChange();
+        if (PhotonNetwork.IsMasterClient && !hasChanges)
+        {
+            playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
+            NotifyChange();
+        }
     }
     private IEnumerator StartCountdown()
     {
@@ -138,16 +149,43 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     }
     public void NotifyChange()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient && !hasChanges)
         {
             hasChanges = true;
+            Debug.Log("[GameManagerPhoton] Notificação de mudança enviada.");
         }
     }
     public void DealCards()
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            dealer.DealCards(cardsPerPlayer, deck, playerHands);
+            Debug.Log("[GameManagerPhoton] DealCards chamada pelo MasterClient.");
+
+            int totalCardsNeeded = cardsPerPlayer * playerHands.Count;
+
+            if (deck.GetCards().Count < totalCardsNeeded)
+            {
+                Debug.LogWarning("[GameManagerPhoton] Deck não possui cartas suficientes.");
+                return;
+            }
+
+            foreach (HandCardManager hand in playerHands)
+            {
+                Debug.Log($"[GameManagerPhoton] Distribuindo cartas para {hand.name}");
+                for (int i = 0; i < cardsPerPlayer; i++)
+                {
+                    CardData cardToDeal = deck.RemoveCardData();
+                    if (cardToDeal != null)
+                    {
+                        hand.AddCard(cardToDeal);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[GameManagerPhoton] Deck está vazio! Não há mais cartas.");
+                        return;
+                    }
+                }
+            }
         }
     }
 }

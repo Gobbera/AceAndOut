@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
-public class Deck : MonoBehaviour
+public class Deck : MonoBehaviourPun
 {
     [SerializeField] private List<CardData> cardDataList; // Lista dos dados das cartas (52 CardData ScriptableObjects)
     [SerializeField] private GameObject cardPrefab; // Prefab da carta que será instanciado
@@ -9,14 +10,18 @@ public class Deck : MonoBehaviour
 
     void Start()
     {
-        availableCards = new List<CardData>(cardDataList);
-        InstantiateDeck();
+        if (PhotonNetwork.IsMasterClient)
+        {
+            availableCards = new List<CardData>(cardDataList);
+            //InstantiateDeck();
+        }
     }
     private void InstantiateDeck()
     {
         foreach (CardData cardData in availableCards)
         {
-            GameObject cardInstance = Instantiate(cardPrefab, transform.position, Quaternion.identity, transform);
+            GameObject cardInstance = PhotonNetwork.Instantiate(cardPrefab.name, transform.position, Quaternion.identity);
+            //GameObject cardInstance = Instantiate(cardPrefab, transform.position, Quaternion.identity, transform);
             Card cardComponent = cardInstance.GetComponent<Card>();
 
             if (cardComponent != null)

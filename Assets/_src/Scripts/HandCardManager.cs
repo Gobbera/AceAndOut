@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class HandCardManager : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class HandCardManager : MonoBehaviour
     {
         cardsInHand.Add(card);
 
-        GameObject cardInstance = Instantiate(cardPrefab, transform.position, Quaternion.identity, transform);
+        GameObject cardInstance = PhotonNetwork.Instantiate(cardPrefab.name, transform.position, Quaternion.identity);
         Card cardComponent = cardInstance.GetComponent<Card>();
 
         if (cardComponent != null)
