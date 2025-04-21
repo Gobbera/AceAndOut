@@ -11,6 +11,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public Suit suit;
     public Rank rank;
     public int cardValue;
+    public bool hasPicked;
     private Image imageComponent;
     private bool isMouseOver = false;
     public bool cardInDropZone = false;

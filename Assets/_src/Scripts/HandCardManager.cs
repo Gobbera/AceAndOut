@@ -11,18 +11,16 @@ public class HandCardManager : MonoBehaviour
     public float maxWidth = 800f;
     public float maxHeight = 200f;
     public List<CardData> cardsInHand = new List<CardData>();
-
     public void Initialize(Player assignedPlayer)
     {
         player = assignedPlayer;
         handsCardGroup = GetComponent<RectTransform>();
     }
-
     public void AddCard(CardData card)
     {
         cardsInHand.Add(card);
 
-        GameObject cardInstance = PhotonNetwork.Instantiate(cardPrefab.name, transform.position, Quaternion.identity);
+        GameObject cardInstance = Instantiate(cardPrefab, transform.position, Quaternion.identity);
         Card cardComponent = cardInstance.GetComponent<Card>();
 
         if (cardComponent != null)
@@ -30,10 +28,10 @@ public class HandCardManager : MonoBehaviour
             cardComponent.cardData = card;
             cardComponent.origem = player;
             cardComponent.UpdateCardProperties();
+            cardInstance.transform.SetParent(this.transform);
         }
         ReorganizeCards();
     }
-
     private void ReorganizeCards()
     {
         float cardSpacing = Mathf.Min(maxWidth / cardsInHand.Count, maxWidth / 10);

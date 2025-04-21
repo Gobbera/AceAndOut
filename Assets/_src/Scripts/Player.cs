@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using System.Linq;
+using TMPro;
 
 public class Player : MonoBehaviourPun
 {
+     private TMP_Text nicknameTag;
     public GameManagerPhoton GMPhoton;
     public PhotonView view;
     public TablePositions tablePosition;
@@ -18,6 +20,7 @@ public class Player : MonoBehaviourPun
     void Start()
     {
         GMPhoton = GameObject.Find("GameManagerPhoton").GetComponent<GameManagerPhoton>();
+        nicknameTag = transform.Find("NicknameTag")?.GetComponent<TMP_Text>();
         StartCoroutine(DelayedStart());
     }
     IEnumerator DelayedStart()
@@ -29,10 +32,9 @@ public class Player : MonoBehaviourPun
         transform.SetParent(spawnPosition);
         transform.position = spawnPosition.position;
         handCardManager.Initialize(this);
-        if (PhotonNetwork.IsMasterClient)
-        {
-            GMPhoton.AddPlayerObj(this);
-        }
+        nicknameTag.text = view.Controller.NickName;
+        GMPhoton.AddPlayerObj(this);
+        
     }
     public Transform GetViewPosition(PhotonView playerView)
     {

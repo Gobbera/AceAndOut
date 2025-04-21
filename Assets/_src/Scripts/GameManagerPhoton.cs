@@ -17,7 +17,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     public Deck deck;
     public Dealer dealer;
     public int cardsPerPlayer = 3;
-
+    public List<CardData> cardsDataOnGame = new List<CardData>();
     public bool hasChanges = false;
     private void Awake()
     {
@@ -36,6 +36,13 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             StartGame();
+        }
+    }
+    public void StartGame()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            ChangeState(GameState.WAITING_PLAYERS);
         }
     }
     private void Update()
@@ -61,13 +68,6 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
             }
         }
     }
-    public void StartGame()
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            ChangeState(GameState.WAITING_PLAYERS);
-        }
-    }
     private void ChangeState(GameState newState)
     {
         if (PhotonNetwork.IsMasterClient) 
@@ -88,35 +88,26 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
                 break;
             case GameState.READY_TO_PLAY:
                 gameController.gameLog.changeText("Adversário encontrado! O jogo vai iniciar em instantes...");
-                if (PhotonNetwork.IsMasterClient) 
-                {
-                    NotifyChange();
-                }
+                NotifyChange();
                 break;
             case GameState.STARTING_THE_GAME:
                 StartCoroutine(StartCountdown());
                 break;
             case GameState.DEALING_CARDS:
                 gameController.gameLog.changeText("Distribuindo Cartas...");
-                if (PhotonNetwork.IsMasterClient) 
-                {
-                    DealCards();
-                }
+                DealCards();
                 break;
         }
     }
     public void AddPlayerObj(Player player)
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (player)
         {
-            if (player)
-            {
-                players.Add(player.GetComponent<Player>());
-            }
-            if (player.handCardManager != null)
-            {
+            players.Add(player.GetComponent<Player>());
+        }
+        if (player.handCardManager != null)
+        {
                 playerHands.Add(player.handCardManager.GetComponent<HandCardManager>());
-            }
         }
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
@@ -157,35 +148,44 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     }
     public void DealCards()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        int playersCount = PhotonNetwork.CurrentRoom.PlayerCount;
+        int totalCardsNeeded = cardsPerPlayer * playersCount;
+
+        if (deck.GetCards().Count < totalCardsNeeded)
         {
-            Debug.Log("[GameManagerPhoton] DealCards chamada pelo MasterClient.");
-
-            int totalCardsNeeded = cardsPerPlayer * playerHands.Count;
-
-            if (deck.GetCards().Count < totalCardsNeeded)
-            {
-                Debug.LogWarning("[GameManagerPhoton] Deck não possui cartas suficientes.");
-                return;
-            }
-
-            foreach (HandCardManager hand in playerHands)
-            {
-                Debug.Log($"[GameManagerPhoton] Distribuindo cartas para {hand.name}");
-                for (int i = 0; i < cardsPerPlayer; i++)
-                {
-                    CardData cardToDeal = deck.RemoveCardData();
-                    if (cardToDeal != null)
-                    {
-                        hand.AddCard(cardToDeal);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("[GameManagerPhoton] Deck está vazio! Não há mais cartas.");
-                        return;
-                    }
-                }
+            Debug.LogWarning("[GameManagerPhoton] Deck não possui cartas suficientes.");
+            return;
+        }
+        int[] shuffledDeck = deck.ShuffleAndSyncDeck();
+        photonView.RPC("ReceiveShuffledDeck", RpcTarget.OthersBuffered, shuffledDeck);
+        foreach (Photon.Realtime.Player photonPlayer in PhotonNetwork.PlayerList)
+        {
+            photonView.RPC("ReceiveCards", photonPlayer, photonPlayer.ActorNumber);
+        }
+        //SEPARAR A QUANTIDADE DE CARTAS QUE SERA DISTRIBUIDA NO JOGO POR JOGADOR NO JOGO (SO O MASTER CLIENTE RODA ISSO)
+    }
+    [PunRPC]
+    public void ReceiveCards(int actorNumber)
+    {
+        if (PhotonNetwork.LocalPlayer.ActorNumber == actorNumber)
+        {
+            for (int i = 0; i < cardsPerPlayer; i++)
+            { 
+                playerHands[0].AddCard(deck.availableCards[0]);
+                photonView.RPC("RemoveCard", RpcTarget.AllBuffered);
             }
         }
+    }
+    [PunRPC]
+    public void RemoveCard() 
+    {
+        deck.RemoveCardData();
+    }
+    [PunRPC]
+    public void ReceiveShuffledDeck(int[] shuffledDeck) 
+    {
+        deck.ReceiveShuffledDeck(shuffledDeck);
     }
 }

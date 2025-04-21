@@ -40,6 +40,11 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - UpdateGameState
+  - ReceiveCardsFromMaster
+  - RemoveCardData
+  - RemoveCard
+  - ReceiveCards
+  - ReceiveShuffledDeck
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

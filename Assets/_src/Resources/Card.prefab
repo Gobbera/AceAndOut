@@ -151,6 +151,7 @@ MonoBehaviour:
   suit: 0
   rank: 0
   cardValue: 0
+  hasPicked: 0
   cardInDropZone: 0
 --- !u!114 &7880957974294323139
 MonoBehaviour:

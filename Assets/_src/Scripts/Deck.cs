@@ -4,44 +4,55 @@ using UnityEngine;
 
 public class Deck : MonoBehaviourPun
 {
-    [SerializeField] private List<CardData> cardDataList; // Lista dos dados das cartas (52 CardData ScriptableObjects)
-    [SerializeField] private GameObject cardPrefab; // Prefab da carta que será instanciado
-    public List<CardData> availableCards; // Lista para gerenciar cartas disponíveis
+    [SerializeField] private List<CardData> cardDataList; // Todos os CardData do jogo
+    public List<CardData> availableCards; // Lista das cartas embaralhadas
 
     void Start()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            availableCards = new List<CardData>(cardDataList);
-            //InstantiateDeck();
-        }
+        availableCards = new List<CardData>(cardDataList);
     }
-    private void InstantiateDeck()
+    // Somente o Master embaralha e envia a ordem para os outros
+    public int[] ShuffleAndSyncDeck()
     {
-        foreach (CardData cardData in availableCards)
-        {
-            GameObject cardInstance = PhotonNetwork.Instantiate(cardPrefab.name, transform.position, Quaternion.identity);
-            //GameObject cardInstance = Instantiate(cardPrefab, transform.position, Quaternion.identity, transform);
-            Card cardComponent = cardInstance.GetComponent<Card>();
+        int[] shuffledIndexes = new int[availableCards.Count];
+        for (int i = 0; i < shuffledIndexes.Length; i++) shuffledIndexes[i] = i;
 
-            if (cardComponent != null)
-            {
-                cardComponent.cardData = cardData;
-                cardComponent.UpdateCardProperties();
-            }
+        for (int i = 0; i < shuffledIndexes.Length; i++)
+        {
+            int rand = Random.Range(i, shuffledIndexes.Length);
+            (shuffledIndexes[i], shuffledIndexes[rand]) = (shuffledIndexes[rand], shuffledIndexes[i]);
+        }
+
+        // Reorganiza localmente
+        List<CardData> shuffledCards = new List<CardData>();
+        foreach (int index in shuffledIndexes)
+        {
+            shuffledCards.Add(cardDataList[index]);
+        }
+        availableCards = shuffledCards;
+
+        // Envia ordem para os outros jogadores
+        return shuffledIndexes;
+    }
+    public void ReceiveShuffledDeck(int[] shuffledIndexes)
+    {
+        availableCards = new List<CardData>();
+        foreach (int index in shuffledIndexes)
+        {
+            availableCards.Add(cardDataList[index]);
         }
     }
     public List<CardData> GetCards()
     {
         return availableCards;
-    }   
+    }
     public CardData RemoveCardData()
     {
         if (availableCards.Count > 0)
         {
             CardData cardData = availableCards[0];
             availableCards.RemoveAt(0);
-            
+
             Transform cardVisual = transform.Find(cardData.name);
             if (cardVisual != null)
             {
