@@ -7,6 +7,7 @@ public class HandCardManager : MonoBehaviour
     public GameManagerPhoton GMPhoton;
     [SerializeField] private Player player;
     [SerializeField] private GameObject cardPrefab;
+    [SerializeField] private GameObject cardHiddenPrefab;
     private RectTransform handsCardGroup;
     public float maxWidth = 800f;
     public float maxHeight = 200f;
@@ -30,6 +31,14 @@ public class HandCardManager : MonoBehaviour
             cardComponent.UpdateCardProperties();
             cardInstance.transform.SetParent(this.transform);
         }
+        ReorganizeCards();
+    }
+    public void AddHiddenCard()
+    {
+        GameObject cardInstance = Instantiate(cardHiddenPrefab, transform.position, Quaternion.identity);
+        CardData card = cardInstance.GetComponent<Card>().cardData;
+        cardsInHand.Add(card);
+        cardInstance.transform.SetParent(this.transform);
         ReorganizeCards();
     }
     private void ReorganizeCards()

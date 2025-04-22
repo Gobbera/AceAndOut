@@ -164,7 +164,6 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
         {
             photonView.RPC("ReceiveCards", photonPlayer, photonPlayer.ActorNumber);
         }
-        //SEPARAR A QUANTIDADE DE CARTAS QUE SERA DISTRIBUIDA NO JOGO POR JOGADOR NO JOGO (SO O MASTER CLIENTE RODA ISSO)
     }
     [PunRPC]
     public void ReceiveCards(int actorNumber)
@@ -174,6 +173,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
             for (int i = 0; i < cardsPerPlayer; i++)
             { 
                 playerHands[0].AddCard(deck.availableCards[0]);
+                playerHands[1].AddHiddenCard();                                 //Temporario
                 photonView.RPC("RemoveCard", RpcTarget.AllBuffered);
             }
         }

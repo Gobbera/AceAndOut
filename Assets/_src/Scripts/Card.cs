@@ -12,6 +12,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public Rank rank;
     public int cardValue;
     public bool hasPicked;
+    public bool isHidden;
     private Image imageComponent;
     private bool isMouseOver = false;
     public bool cardInDropZone = false;
@@ -35,7 +36,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         cardValue = cardData.cardValue;
         name = cardData.name;
     }
-
     // EVENTS
     public void OnPointerEnter(PointerEventData eventData)
     {

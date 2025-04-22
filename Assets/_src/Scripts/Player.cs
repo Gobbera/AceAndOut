@@ -7,7 +7,7 @@ using TMPro;
 
 public class Player : MonoBehaviourPun
 {
-     private TMP_Text nicknameTag;
+    private TMP_Text nicknameTag;
     public GameManagerPhoton GMPhoton;
     public PhotonView view;
     public TablePositions tablePosition;
