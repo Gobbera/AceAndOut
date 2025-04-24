@@ -16,7 +16,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private Image imageComponent;
     private bool isMouseOver = false;
     public bool cardInDropZone = false;
-
     // Evento para notificar que a carta foi lançada
     public static event Action<Player, CardData> OnCardLaunched;
     void Start()
@@ -24,7 +23,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         imageComponent = GetComponent<Image>();
         UpdateCardProperties();
     }
-
     public void UpdateCardProperties()
     {
         if (cardData != null && imageComponent != null)
@@ -41,22 +39,19 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         isMouseOver = true;
     }
-
     public void OnPointerExit(PointerEventData eventData)
     {
         isMouseOver = false;
     }
-
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (!origem || !origem.view.IsMine || !origem.isTurn) return;
+        if (!origem || !origem.view.IsMine || origem.isTurn) return;
         if (isMouseOver && eventData.button == PointerEventData.InputButton.Right)
         {
             Debug.Log("Carta a ser lançada: " + rank + " " + suit);
             LaunchCard();
         }
     }
-
     void LaunchCard()
     {
         if (!cardInDropZone)
@@ -64,8 +59,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             DropZone dropZone = origem.dropZone;
             dropZone.UpdateCurrentCard(cardData, origem);
             Destroy(gameObject);
-            Debug.Log("Lançado Carta no DropZone do " + dropZone.dropZoneName);
-
             OnCardLaunched?.Invoke(origem, cardData);
         }
     }

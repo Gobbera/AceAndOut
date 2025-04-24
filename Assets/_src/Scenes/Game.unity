@@ -453,6 +453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13ed67798f855e0489c037ca48f78de3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GMPhoton: {fileID: 200199723}
   cardPrefab: {fileID: 3104230083025913918, guid: 8ae5ea012587df849acbddb74e885110,
     type: 3}
   dropZoneName: 
@@ -666,6 +667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13ed67798f855e0489c037ca48f78de3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GMPhoton: {fileID: 200199723}
   cardPrefab: {fileID: 3104230083025913918, guid: 8ae5ea012587df849acbddb74e885110,
     type: 3}
   dropZoneName: 

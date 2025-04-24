@@ -29,12 +29,12 @@ public class Player : MonoBehaviourPun
         tablePosition = GetComponent<TablePositions>();
         view = GetComponent<PhotonView>();
         Transform spawnPosition = GetViewPosition(view);
+        dropZone = spawnPosition.transform.Find("DropZone").GetComponent<DropZone>();
         transform.SetParent(spawnPosition);
         transform.position = spawnPosition.position;
         handCardManager.Initialize(this);
         nicknameTag.text = view.Controller.NickName;
         GMPhoton.AddPlayerObj(this);
-        
     }
     public Transform GetViewPosition(PhotonView playerView)
     {

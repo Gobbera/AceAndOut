@@ -1,7 +1,7 @@
 using UnityEngine;
-
 public class DropZone : MonoBehaviour
 {
+    public GameManagerPhoton GMPhoton;
     [SerializeField] private GameObject cardPrefab;
     public string dropZoneName;
     public GameObject currentCard;
@@ -9,7 +9,6 @@ public class DropZone : MonoBehaviour
     {
         currentCard = Instantiate(cardPrefab, transform.position, Quaternion.identity, transform);
         Card cardComponent = currentCard.GetComponent<Card>();
-
         if (cardComponent != null)
         {
             cardComponent.cardData = cardData;
@@ -18,5 +17,6 @@ public class DropZone : MonoBehaviour
             Debug.Log("Carta No DropZone do Jogador" + dropZoneName);
         }
         cardComponent.cardInDropZone = true;
+        GMPhoton.PublishCard(origem, cardData);
     }
 }

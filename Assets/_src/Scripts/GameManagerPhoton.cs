@@ -188,4 +188,13 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     {
         deck.ReceiveShuffledDeck(shuffledDeck);
     }
+    public void PublishCard(Player player, CardData cardData)
+    {
+        photonView.RPC("PublishCardRPC", RpcTarget.Others);
+    }
+    [PunRPC]
+    public void PublishCardRPC()
+    {
+        gameController.gameLog.changeText("Carta Lançada");
+    }
 }
