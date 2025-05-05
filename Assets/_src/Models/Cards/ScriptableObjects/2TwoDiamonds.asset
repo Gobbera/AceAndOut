@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52ca60c9cc7c74743a99f6bae60023b4, type: 3}
   m_Name: 2TwoDiamonds
   m_EditorClassIdentifier: 
+  key: 201
   cardName: Two Of Diamonds
   rank: 1
   suit: 1

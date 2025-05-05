@@ -63,4 +63,31 @@ public class Deck : MonoBehaviourPun
         Debug.LogWarning("Tentativa de remover carta de um deck vazio.");
         return null;
     }
+    public CardData GetCardById(int cardId)
+    {
+        int rank = cardId / 100; // Ex: 1204 → 12 (Dama)
+        int suit = cardId % 10;  // Ex: 1204 → 4 (Clubs)
+
+        // SuitMap: 1 = Diamonds, 2 = Spades, 3 = Hearts, 4 = Clubs
+        // Agora como a ordem é [rank][suit], usamos o seguinte índice:
+        int suitOffset;
+        switch (suit)
+        {
+            case 1: suitOffset = 1; break; // Diamonds
+            case 2: suitOffset = 3; break; // Spades
+            case 3: suitOffset = 2; break; // Hearts
+            case 4: suitOffset = 0; break; // Clubs
+            case 5: suitOffset = 5; break; // Hidden
+            case 6: suitOffset = 6; break; // Joker
+            default: return null;
+        }
+
+        int index = ((rank - 1) * 4) + suitOffset;
+
+        if (index < 0 || index >= cardDataList.Count)
+            return null;
+
+        return cardDataList[index];
+    }
+
 }

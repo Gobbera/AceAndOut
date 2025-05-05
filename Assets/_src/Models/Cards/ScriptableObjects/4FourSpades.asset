@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52ca60c9cc7c74743a99f6bae60023b4, type: 3}
   m_Name: 4FourSpades
   m_EditorClassIdentifier: 
+  key: 402
   cardName: Four Of Spades
   rank: 3
   suit: 3

@@ -13,9 +13,8 @@ GameObject:
   - component: {fileID: 1241889746897704188}
   - component: {fileID: 3986996310281076689}
   - component: {fileID: 6517864984255978093}
-  - component: {fileID: 1877543621805641054}
   - component: {fileID: 1068893760483524915}
-  - component: {fileID: 5569883586561145375}
+  - component: {fileID: -311134754045543201}
   m_Layer: 7
   m_Name: HiddenCard
   m_TagString: Card
@@ -133,26 +132,6 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1241889746897704188}
---- !u!114 &1877543621805641054
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 181218290066070131}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b249ff9415a6e084096cba8ce7a0f76b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  origem: {fileID: 0}
-  cardData: {fileID: 11400000, guid: 8f335e9a0b8d81b41a20a72e31d207b6, type: 2}
-  suit: 5
-  rank: 14
-  cardValue: 0
-  hasPicked: 0
-  isHidden: 1
-  cardInDropZone: 0
 --- !u!114 &1068893760483524915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45138bc27e69e9846924667b5cd211a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5569883586561145375
+--- !u!114 &-311134754045543201
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -174,16 +153,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 181218290066070131}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Script: {fileID: 11500000, guid: b249ff9415a6e084096cba8ce7a0f76b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
+  origem: {fileID: 0}
+  cardData: {fileID: 11400000, guid: 8e4f39407e367af4f85ceefda515128e, type: 2}
+  suit: 5
+  rank: 14
+  cardValue: 0
+  hasPicked: 0
+  isHidden: 1
+  cardInDropZone: 0

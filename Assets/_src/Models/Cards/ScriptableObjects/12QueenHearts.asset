@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52ca60c9cc7c74743a99f6bae60023b4, type: 3}
   m_Name: 12QueenHearts
   m_EditorClassIdentifier: 
+  key: 1203
   cardName: Queen Of Hearts
   rank: 11
   suit: 0

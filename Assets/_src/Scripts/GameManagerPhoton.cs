@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ExitGames.Client.Photon.StructWrapping;
 
-public enum GameState { WAITING_PLAYERS, READY_TO_PLAY, STARTING_THE_GAME, DEALING_CARDS }
+public enum GameState { WAITING_PLAYERS, READY_TO_PLAY, STARTING_THE_GAME, DEALING_CARDS, TURN_FROM, TURN_FROM_PT2 }
 
 public class GameManagerPhoton : MonoBehaviourPunCallbacks
 {
@@ -19,6 +19,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     public int cardsPerPlayer = 3;
     public List<CardData> cardsDataOnGame = new List<CardData>();
     public bool hasChanges = false;
+    public int currentTurnActor;
     private void Awake()
     {
         if (Instance == null)
@@ -64,6 +65,9 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
                     case GameState.STARTING_THE_GAME:
                         ChangeState(GameState.DEALING_CARDS);
                         break;
+                    case GameState.TURN_FROM:
+                        ChangeState(GameState.TURN_FROM);
+                        break;
                 }
             }
         }
@@ -96,6 +100,9 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
             case GameState.DEALING_CARDS:
                 gameController.gameLog.changeText("Distribuindo Cartas...");
                 DealCards();
+                break;
+            case GameState.TURN_FROM:
+                gameController.gameLog.changeText("Turno de ." + currentTurnActor);
                 break;
         }
     }
@@ -164,6 +171,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
         {
             photonView.RPC("ReceiveCards", photonPlayer, photonPlayer.ActorNumber);
         }
+        DetermineCurrentTurnPlayer();
     }
     [PunRPC]
     public void ReceiveCards(int actorNumber)
@@ -190,11 +198,32 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     }
     public void PublishCard(Player player, CardData cardData)
     {
-        photonView.RPC("PublishCardRPC", RpcTarget.Others);
+        photonView.RPC("PublishCardRPC", RpcTarget.Others, cardData.key);
     }
     [PunRPC]
-    public void PublishCardRPC()
+    public void PublishCardRPC(int cardKey)
     {
-        gameController.gameLog.changeText("Carta Lançada");
+        gameController.gameLog.changeText("Carta Lançada" + cardKey);
+        CardData cardData = deck.GetCardById(cardKey);
+        players[1].dropZone.UpdateCurrentCard(cardData, players[1], false);
+        //DestroyImmediate(playerHands[1].cardsInHand[0], true);
     }
+    public void DetermineCurrentTurnPlayer()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        var players = PhotonNetwork.PlayerList;
+        int randomIndex = Random.Range(0, players.Length);
+        int actorNumber = players[randomIndex].ActorNumber;
+
+        photonView.RPC("SetTurnOwner", RpcTarget.All, actorNumber); 
+    }
+    [PunRPC]
+    public void SetTurnOwner(int actorNumber)
+    {
+        ChangeState(GameState.TURN_FROM);
+        currentTurnActor = actorNumber;
+        //Player player = 
+    }
+    //public void Determine
 }

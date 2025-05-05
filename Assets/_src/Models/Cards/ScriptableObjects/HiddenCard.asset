@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52ca60c9cc7c74743a99f6bae60023b4, type: 3}
   m_Name: HiddenCard
   m_EditorClassIdentifier: 
-  cardName: HiddenCard
+  key: 5
+  cardName: Joker
   rank: 14
   suit: 5
   cardValue: 0

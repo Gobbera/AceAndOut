@@ -5,7 +5,7 @@ public class DropZone : MonoBehaviour
     [SerializeField] private GameObject cardPrefab;
     public string dropZoneName;
     public GameObject currentCard;
-    public void UpdateCurrentCard(CardData cardData, Player origem)
+    public void UpdateCurrentCard(CardData cardData, Player origem, bool shouldPublish = true)
     {
         currentCard = Instantiate(cardPrefab, transform.position, Quaternion.identity, transform);
         Card cardComponent = currentCard.GetComponent<Card>();
@@ -14,9 +14,11 @@ public class DropZone : MonoBehaviour
             cardComponent.cardData = cardData;
             cardComponent.origem = origem;
             cardComponent.UpdateCardProperties();
-            Debug.Log("Carta No DropZone do Jogador" + dropZoneName);
+            cardComponent.cardInDropZone = true;
         }
-        cardComponent.cardInDropZone = true;
-        GMPhoton.PublishCard(origem, cardData);
+        if (shouldPublish)
+        {
+            GMPhoton.PublishCard(origem, cardData);
+        }
     }
 }
