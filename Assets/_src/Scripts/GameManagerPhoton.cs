@@ -20,6 +20,8 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     public List<CardData> cardsDataOnGame = new List<CardData>();
     public bool hasChanges = false;
     public int currentTurnActor;
+    public Player player1;
+    public Player player2;
     private void Awake()
     {
         if (Instance == null)
@@ -100,6 +102,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
             case GameState.DEALING_CARDS:
                 gameController.gameLog.changeText("Distribuindo Cartas...");
                 DealCards();
+                AssignPlayers();
                 break;
             case GameState.TURN_FROM:
                 gameController.gameLog.changeText("Turno de ." + currentTurnActor);
@@ -215,15 +218,22 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
         var players = PhotonNetwork.PlayerList;
         int randomIndex = Random.Range(0, players.Length);
         int actorNumber = players[randomIndex].ActorNumber;
-
         photonView.RPC("SetTurnOwner", RpcTarget.All, actorNumber); 
     }
     [PunRPC]
     public void SetTurnOwner(int actorNumber)
     {
         ChangeState(GameState.TURN_FROM);
-        currentTurnActor = actorNumber;
-        //Player player = 
+        currentTurnActor = actorNumber; 
     }
-    //public void Determine
+    public void AssignPlayers()
+    {
+        // Encontra os scripts Player correspondentes
+        Player[] allPlayers = FindObjectsOfType<Player>();
+        foreach (Player p in allPlayers)
+        {
+            if (p.ActorNumber == 1) player1 = p;
+            else if (p.ActorNumber == 2) player2 = p;
+        }
+    }
 }

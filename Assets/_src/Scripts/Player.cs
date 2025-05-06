@@ -34,6 +34,8 @@ public class Player : MonoBehaviourPun
         transform.position = spawnPosition.position;
         handCardManager.Initialize(this);
         nicknameTag.text = view.Controller.NickName;
+        PhotonView pv = GetComponent<PhotonView>();
+        ActorNumber = pv.Owner.ActorNumber;
         GMPhoton.AddPlayerObj(this);
     }
     public Transform GetViewPosition(PhotonView playerView)
