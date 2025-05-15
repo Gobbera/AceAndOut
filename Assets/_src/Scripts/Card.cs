@@ -45,7 +45,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     }
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (!origem || !origem.view.IsMine || origem.isTurn) return;
+        if (!origem || !origem.view.IsMine || !origem.isTurn) return;
         if (isMouseOver && eventData.button == PointerEventData.InputButton.Right)
         {
             Debug.Log("Carta a ser lançada: " + rank + " " + suit);

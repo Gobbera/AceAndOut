@@ -16,7 +16,7 @@ public class Player : MonoBehaviourPun
     public int ActorNumber;
     public string nickname;
     public bool isDealer;
-    public bool isTurn;
+    public bool isTurn = false;
     void Start()
     {
         GMPhoton = GameObject.Find("GameManagerPhoton").GetComponent<GameManagerPhoton>();
@@ -34,6 +34,7 @@ public class Player : MonoBehaviourPun
         transform.position = spawnPosition.position;
         handCardManager.Initialize(this);
         nicknameTag.text = view.Controller.NickName;
+        nickname = view.Controller.NickName;
         PhotonView pv = GetComponent<PhotonView>();
         ActorNumber = pv.Owner.ActorNumber;
         GMPhoton.AddPlayerObj(this);
