@@ -349,8 +349,90 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
             if (!isDraw) gameController.gameLog.changeText(player2.nickname + " Venceu o turno");
             GDManager.incrementTurnValue(player2.ActorNumber);
         }
+        if (CheckRoundEnded())
+        {
+            isRoundEnded = true;
+            int roundWinner = GetRoundWinner();
+            if (roundWinner != -1)
+            {
+                GDManager.incrementScore(1, roundWinner);
+                DeclareRoundWinner(roundWinner);
+                GDManager.ResetTurnData();
+            }
+            return;
+        }
         InitNextTurn(playerToPlay);
         //UpdateScoreUI();
+    }
+    private bool CheckRoundEnded()
+    {
+        int p1Wins = 0;
+        int p2Wins = 0;
+
+        for (int i = 0; i < GDManager.currentTurnIndex; i++)
+        {
+            int winner = GDManager.turnWinOrder[i];
+            if (winner == player1.ActorNumber)
+                p1Wins++;
+            else if (winner == player2.ActorNumber)
+                p2Wins++;
+        }
+
+        // Alguém venceu dois turnos
+        if (p1Wins == 2 || p2Wins == 2)
+            return true;
+
+        // Empate + vitória = fim da rodada (só faz sentido verificar no terceiro turno)
+        if (GDManager.currentTurnIndex == 3)
+            return true;
+
+        return false;
+    }
+    private int GetRoundWinner()
+    {
+        int p1Wins = 0;
+        int p2Wins = 0;
+
+        for (int i = 0; i < GDManager.currentTurnIndex; i++)
+        {
+            int winner = GDManager.turnWinOrder[i];
+            if (winner == player1.ActorNumber)
+                p1Wins++;
+            else if (winner == player2.ActorNumber)
+                p2Wins++;
+        }
+
+        // Alguém venceu 2 turnos
+        if (p1Wins == 2)
+            return player1.ActorNumber;
+
+        if (p2Wins == 2)
+            return player2.ActorNumber;
+
+        // Dois turnos e um é empate (1 vitória + 1 empate)
+        if (GDManager.currentTurnIndex == 2)
+        {
+            if (p1Wins == 1 && p2Wins == 0)
+                return player1.ActorNumber;
+
+            if (p2Wins == 1 && p1Wins == 0)
+                return player2.ActorNumber;
+        }
+
+        // Três turnos com 1 vitória pra cada e 1 empate
+        if (GDManager.currentTurnIndex == 3 && p1Wins == 1 && p2Wins == 1)
+        {
+            // Quem venceu o primeiro turno ganha
+            for (int i = 0; i < 3; i++)
+            {
+                if (GDManager.turnWinOrder[i] == player1.ActorNumber)
+                    return player1.ActorNumber;
+
+                if (GDManager.turnWinOrder[i] == player2.ActorNumber)
+                    return player2.ActorNumber;
+            }
+        }
+        return -1;
     }
     [PunRPC]
     public void RPC_ResetForNextTurn()
@@ -407,13 +489,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
 
         GDManager.roundNumber++;
 
-        ResetForNextRound();
         StartNewRound();
-    }
-    public void ResetForNextRound()
-    {
-        if (!PhotonNetwork.IsMasterClient) return;
-        photonView.RPC("RPC_ResetForNextRound", RpcTarget.AllBuffered);
     }
     [PunRPC]
     public void RPC_ResetForNextRound()
@@ -430,7 +506,11 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     public void StartNewRound()
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        photonView.RPC("RPC_StartNewRound", RpcTarget.AllBuffered);
+        ExecuteAfterDelay(2f, () =>
+        {
+            photonView.RPC("RPC_ResetForNextRound", RpcTarget.AllBuffered);
+            photonView.RPC("RPC_StartNewRound", RpcTarget.AllBuffered);
+        });
     }
     [PunRPC]
     public void RPC_StartNewRound()
