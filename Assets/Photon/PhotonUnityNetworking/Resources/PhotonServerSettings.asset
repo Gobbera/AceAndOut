@@ -52,6 +52,26 @@ MonoBehaviour:
   - DeclareTurnWinner
   - TurnStepIncrementRPC
   - CompareCardsRPC
+  - DeclareRoundWinnerRPC
+  - RPC_StartDelay
+  - RPC_ResetForNextTurn
+  - RPC_InitNextTurn
+  - RPC_CompareCardsRPC
+  - RPC_DeclareRoundWinnerRPC
+  - RPC_DeclareTurnWinner
+  - RPC_PublishThrowerRPC
+  - RPC_ReceiveCards
+  - RPC_ReceiveShuffledDeck
+  - RPC_RemoveCard
+  - RPC_SetTurnOwner
+  - RPC_TurnStepIncrementRPC
+  - RPC_UpdateGameState
+  - RPC_PublishCard
+  - RPC_PublishThrower
+  - RPC_TurnStepIncrement
+  - RPC_DeclareRoundWinner
+  - RPC_ResetForNextRound
+  - RPC_StartNewRound
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

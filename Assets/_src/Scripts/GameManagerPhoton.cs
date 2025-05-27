@@ -5,8 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using ExitGames.Client.Photon.StructWrapping;
 using Unity.VisualScripting;
+using System;
 
-public enum GameState { WAITING_PLAYERS, READY_TO_PLAY, STARTING_THE_GAME, DEALING_CARDS, TURN_FROM, COMPARE_CARDS, TURN_WINNER}
+public enum GameState { WAITING_PLAYERS, READY_TO_PLAY, STARTING_THE_GAME, DEALING_CARDS, TURN_FROM, TURN_WINNER}
 
 public class GameManagerPhoton : MonoBehaviourPunCallbacks
 {
@@ -30,6 +31,8 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     public Player player2;
     public bool isFirstRound = true;
     public bool isFirstTurn = true;
+    public bool isDraw = false;
+    public bool isRoundEnded = false;
     public int firstTurnPlayer;
     private void Awake()
     {
@@ -43,19 +46,26 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
             return;
         }
     }
+    public void AddPlayerObj(Player player)
+    {
+        if (player)
+        {
+            players.Add(player.GetComponent<Player>());
+        }
+        if (player.handCardManager != null)
+        {
+            playerHands.Add(player.handCardManager.GetComponent<HandCardManager>());
+        }
+    }
     private void Start()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            StartGame();
-        }
+        if (!PhotonNetwork.IsMasterClient) return;
+        StartGame();
     }
     public void StartGame()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            ChangeState(GameState.WAITING_PLAYERS);
-        }
+        if (!PhotonNetwork.IsMasterClient) return;
+        ChangeState(GameState.WAITING_PLAYERS);
     }
     public void AssignPlayers()
     {
@@ -66,12 +76,57 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
             else if (p.ActorNumber == 2) player2 = p;
         }
     }
+    private void ChangeState(GameState newState)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        photonView.RPC("RPC_UpdateGameState", RpcTarget.AllBuffered, (int)newState);
+    }
+    [PunRPC]
+    public void RPC_UpdateGameState(int newStateInt)
+    {
+        gameState = (GameState)newStateInt;
+        Debug.Log($"[GameManagerPhoton] Novo estado do jogo: {gameState}");
+
+        switch (gameState)
+        {
+            case GameState.WAITING_PLAYERS:
+                gameController.gameLog.changeText("Aguardando Jogadores...");
+                break;
+            case GameState.READY_TO_PLAY:
+                gameController.gameLog.changeText("Adversário encontrado! O jogo vai iniciar em instantes...");
+                ExecuteAfterDelay(1f, () =>
+                {
+                    NotifyChange();
+                });
+                break;
+            case GameState.STARTING_THE_GAME:
+                StartCoroutine(StartCountdown());
+                break;
+            case GameState.DEALING_CARDS:
+                gameController.gameLog.changeText("Distribuindo Cartas...");
+                if (allPlayers.Count() < 2)
+                {
+                    AssignPlayers();
+                }
+                ExecuteAfterDelay(1f, () =>
+                {
+                    DealCards();
+                });
+                break;
+            case GameState.TURN_FROM:
+                string nickname = allPlayers.FirstOrDefault(p => p.ActorNumber == currentTurnActor)?.nickname ?? "Player";
+                gameController.gameLog.changeText("Turno de" + " " + nickname);
+                break;
+            case GameState.TURN_WINNER:
+                //
+                break;
+        }
+    }
     private void Update()
     {
         if (PhotonNetwork.IsMasterClient && hasChanges)
         {
-            hasChanges = false; // Reseta após processar a alteração
-            
+            hasChanges = false;
             if (playerCount >= 2)
             {
                 switch (gameState)
@@ -85,72 +140,14 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
                     case GameState.STARTING_THE_GAME:
                         ChangeState(GameState.DEALING_CARDS);
                         break;
-                    case GameState.TURN_FROM:
-                        ChangeState(GameState.TURN_FROM); //??
-                        break;
                 }
             }
         }
     }
-    private void ChangeState(GameState newState)
-    {
-        if (PhotonNetwork.IsMasterClient) 
-        {
-            photonView.RPC("UpdateGameState", RpcTarget.AllBuffered, (int)newState);
-        }
-    }
-    [PunRPC]
-    public void UpdateGameState(int newStateInt)
-    {
-        gameState = (GameState)newStateInt;
-        Debug.Log($"[GameManagerPhoton] Novo estado do jogo: {gameState}");
-
-        switch (gameState)
-        {
-            case GameState.WAITING_PLAYERS:
-                gameController.gameLog.changeText("Aguardando Jogadores...");
-                break;
-            case GameState.READY_TO_PLAY:
-                gameController.gameLog.changeText("Adversário encontrado! O jogo vai iniciar em instantes...");
-                NotifyChange();
-                break;
-            case GameState.STARTING_THE_GAME:
-                StartCoroutine(StartCountdown());
-                break;
-            case GameState.DEALING_CARDS:
-                gameController.gameLog.changeText("Distribuindo Cartas...");
-                AssignPlayers();
-                DealCards();
-                break;
-            case GameState.TURN_FROM:
-                string nickname = allPlayers.FirstOrDefault(p => p.ActorNumber == currentTurnActor)?.nickname ?? "Player";
-                gameController.gameLog.changeText("Turno de " + nickname + ".");
-                break;
-            case GameState.COMPARE_CARDS:
-                gameController.gameLog.changeText("combate de cartas");
-                break;
-            case GameState.TURN_WINNER:
-                //
-                break;
-        }
-    }
-    public void AddPlayerObj(Player player)
-    {
-        if (player)
-        {
-            players.Add(player.GetComponent<Player>());
-        }
-        if (player.handCardManager != null)
-        {
-            playerHands.Add(player.handCardManager.GetComponent<HandCardManager>());
-        }
-    }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            InstanceRemotePlayer(newPlayer);
-        }
+        if (!PhotonNetwork.IsMasterClient) return;
+        InstanceRemotePlayer(newPlayer);
     }
     public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
     {
@@ -167,19 +164,15 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
             NotifyChange();
         }
     }
+    public void NotifyChange()
+    {
+        if (PhotonNetwork.IsMasterClient && !hasChanges) hasChanges = true;
+    }
     private IEnumerator StartCountdown()
     {
         yield return gameController.gameLog.StartCountdown();
         ChangeState(GameState.DEALING_CARDS);
         NotifyChange();
-    }
-    public void NotifyChange()
-    {
-        if (PhotonNetwork.IsMasterClient && !hasChanges)
-        {
-            hasChanges = true;
-            Debug.Log("[GameManagerPhoton] Notificação de mudança enviada.");
-        }
     }
     public void DealCards()
     {
@@ -190,55 +183,55 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
 
         if (deck.GetCards().Count < totalCardsNeeded)
         {
-            Debug.LogWarning("[GameManagerPhoton] Deck não possui cartas suficientes.");
+            Debug.LogWarning("Deck não possui cartas suficientes.");
             return;
         }
         int[] shuffledDeck = deck.ShuffleAndSyncDeck();
-        photonView.RPC("ReceiveShuffledDeck", RpcTarget.OthersBuffered, shuffledDeck);
+        photonView.RPC("RPC_ReceiveShuffledDeck", RpcTarget.OthersBuffered, shuffledDeck);
         foreach (Photon.Realtime.Player photonPlayer in PhotonNetwork.PlayerList)
         {
-            photonView.RPC("ReceiveCards", photonPlayer, photonPlayer.ActorNumber);
+            photonView.RPC("RPC_ReceiveCards", photonPlayer, photonPlayer.ActorNumber);
         }
         DetermineCurrentTurnPlayer();
     }
     [PunRPC]
-    public void ReceiveCards(int actorNumber)
+    public void RPC_ReceiveCards(int actorNumber)
     {
         if (PhotonNetwork.LocalPlayer.ActorNumber == actorNumber)
         {
             for (int i = 0; i < cardsPerPlayer; i++)
-            { 
+            {
                 playerHands[0].AddCard(deck.availableCards[0]);
                 playerHands[1].AddHiddenCard();                                 //Temporario
-                photonView.RPC("RemoveCard", RpcTarget.AllBuffered);
+                photonView.RPC("RPC_RemoveCard", RpcTarget.AllBuffered);
             }
         }
     }
     [PunRPC]
-    public void RemoveCard() 
+    public void RPC_RemoveCard()
     {
         deck.RemoveCardData();
     }
     [PunRPC]
-    public void ReceiveShuffledDeck(int[] shuffledDeck) 
+    public void RPC_ReceiveShuffledDeck(int[] shuffledDeck)
     {
         deck.ReceiveShuffledDeck(shuffledDeck);
     }
     public void PublishCard(Player player, CardData cardData)
     {
-        photonView.RPC("PublishCardRPC", RpcTarget.OthersBuffered, cardData.key);
-        photonView.RPC("TurnStepIncrementRPC", RpcTarget.AllBuffered);
-        photonView.RPC("PublishThrowerRPC", RpcTarget.AllBuffered, player.ActorNumber);
-        photonView.RPC("CompareCardsRPC", RpcTarget.MasterClient);
+        photonView.RPC("RPC_PublishCard", RpcTarget.OthersBuffered, cardData.key);
+        photonView.RPC("RPC_TurnStepIncrement", RpcTarget.AllBuffered);
+        photonView.RPC("RPC_PublishThrower", RpcTarget.AllBuffered, player.ActorNumber);
+        photonView.RPC("RPC_CompareCardsRPC", RpcTarget.MasterClient);
     }
     [PunRPC]
-    public void TurnStepIncrementRPC()
+    public void RPC_TurnStepIncrement()
     {
         if (!PhotonNetwork.IsMasterClient) return;
         turnStep++;
     }
     [PunRPC]
-    public void PublishCardRPC(int cardKey)
+    public void RPC_PublishCard(int cardKey)
     {
         gameController.gameLog.changeText("Carta Lançada" + cardKey);
         CardData cardData = deck.GetCardById(cardKey);
@@ -246,7 +239,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
         Destroy(playerHands[1].gameObject.transform.GetChild(0).gameObject);
     }
     [PunRPC]
-    public void PublishThrowerRPC(int actorNumber)
+    public void RPC_PublishThrower(int actorNumber)
     {
         lastTurnActor = actorNumber;
         if (lastTurnActor == player1.ActorNumber)
@@ -262,36 +255,37 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     public void DetermineCurrentTurnPlayer()
     {
         if (!PhotonNetwork.IsMasterClient) return;
+        if (isRoundEnded) return;
         if (turnStep == 2) return;
         if (isFirstRound)
         {
             var players = PhotonNetwork.PlayerList;
-            int randomIndex = Random.Range(0, players.Length);
+            int randomIndex = UnityEngine.Random.Range(0, players.Length);
             int actorNumber = players[randomIndex].ActorNumber;
-            photonView.RPC("SetTurnOwner", RpcTarget.AllBuffered, actorNumber); 
+            photonView.RPC("RPC_SetTurnOwner", RpcTarget.AllBuffered, actorNumber);
             firstTurnPlayer = actorNumber;
             return;
         }
-        if (isFirstTurn) 
+        if (isFirstTurn)
         {
-
+            //Aqui sera ao contrario do jogador firstRound para simular a troca de dealer
         }
         if (lastTurnActor == player1.ActorNumber)
         {
-            photonView.RPC("SetTurnOwner", RpcTarget.AllBuffered, player2.ActorNumber);
+            photonView.RPC("RPC_SetTurnOwner", RpcTarget.AllBuffered, player2.ActorNumber);
             return;
         }
         else if (lastTurnActor == player2.ActorNumber)
         {
-            photonView.RPC("SetTurnOwner", RpcTarget.AllBuffered, player1.ActorNumber);
+            photonView.RPC("RPC_SetTurnOwner", RpcTarget.AllBuffered, player1.ActorNumber);
             return;
         }
     }
     [PunRPC]
-    public void SetTurnOwner(int actorNumber)
+    public void RPC_SetTurnOwner(int actorNumber)
     {
+        if (isRoundEnded) return;
         if (isFirstRound) { isFirstRound = false; }
-
         currentTurnActor = actorNumber;
         ChangeState(GameState.TURN_FROM);
         if (currentTurnActor == player1.ActorNumber)
@@ -304,75 +298,176 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    public void CompareCardsRPC()
+    public void RPC_CompareCardsRPC()
     {
         if (!PhotonNetwork.IsMasterClient) return;
         if (turnStep < 2) return;
         if (!player1.dropZone.currentCard || !player2.dropZone.currentCard) return;
-
-        ChangeState(GameState.COMPARE_CARDS);
 
         Card card1 = player1.dropZone.currentCard.GetComponent<Card>();
         Card card2 = player2.dropZone.currentCard.GetComponent<Card>();
 
         if (card1.cardValue > card2.cardValue)
         {
-            photonView.RPC("DeclareTurnWinner", RpcTarget.AllBuffered, player1.ActorNumber);
+            photonView.RPC("RPC_DeclareTurnWinner", RpcTarget.AllBuffered, player1.ActorNumber);
         }
         else if (card1.cardValue < card2.cardValue)
         {
-            photonView.RPC("DeclareTurnWinner", RpcTarget.AllBuffered, player2.ActorNumber);
+            photonView.RPC("RPC_DeclareTurnWinner", RpcTarget.AllBuffered, player2.ActorNumber);
         }
         else if (card1.cardValue == card2.cardValue)
         {
-            photonView.RPC("DeclareTurnWinner", RpcTarget.AllBuffered, 0);
+            photonView.RPC("RPC_DeclareTurnWinner", RpcTarget.AllBuffered, 0);
         }
+
     }
     [PunRPC]
-    public void DeclareTurnWinner(int playerToPlay)
+    public void RPC_DeclareTurnWinner(int playerToPlay)
     {
-        // Atualiza o estado do jogo
+        if (isRoundEnded) return;
         ChangeState(GameState.TURN_WINNER);
-
+        player1.isTurn = false;
+        player2.isTurn = false;
         if (playerToPlay == 0)
         {
+            isDraw = true;
             gameController.gameLog.changeText("Empate");
-            //GDManager.incrementTurnValue(-1);
+            GDManager.incrementTurnValue(-1);
             if (isFirstTurn)
             {
                 playerToPlay = firstTurnPlayer;
+                isFirstTurn = false;
             }
         }
         if (playerToPlay == player1.ActorNumber)
         {
-            gameController.gameLog.changeText(player1.nickname + "Venceu o turno" );
-            player1.isTurn = true;
-            player2.isTurn = false;
-            //GDManager.incrementTurnValue(player1.ActorNumber);
-            //player1.score++;
-            ResetForNextTurn();
-            return;
+            if (!isDraw) gameController.gameLog.changeText(player1.nickname + " Venceu o turno");
+            GDManager.incrementTurnValue(player1.ActorNumber);
         }
         if (playerToPlay == player2.ActorNumber)
         {
-            gameController.gameLog.changeText(player2.nickname + "Venceu o turno" );
-            player2.isTurn = true;
-            player1.isTurn = false;
-            //GDManager.incrementTurnValue(player2.ActorNumber);
-            //player2.score++;
-            ResetForNextTurn();
-            return;
+            if (!isDraw) gameController.gameLog.changeText(player2.nickname + " Venceu o turno");
+            GDManager.incrementTurnValue(player2.ActorNumber);
         }
-        isFirstTurn = false;
-        verifyRoundState();
+        InitNextTurn(playerToPlay);
         //UpdateScoreUI();
     }
-    public void ResetForNextTurn()
+    [PunRPC]
+    public void RPC_ResetForNextTurn()
     {
+        isDraw = false;
         turnStep = 0;
         Destroy(player1.dropZone.currentCard);
         Destroy(player2.dropZone.currentCard);
     }
-    public void verifyRoundState()
-    {}
+    public void InitNextTurn(int playerToPlay)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        if (isRoundEnded) return;
+        ExecuteAfterDelay(2f, () =>
+        {
+            photonView.RPC("RPC_ResetForNextTurn", RpcTarget.AllBuffered);
+            photonView.RPC("RPC_InitNextTurn", RpcTarget.AllBuffered, playerToPlay);
+        });
+    }
+    [PunRPC]
+    public void RPC_InitNextTurn(int playerToPlay)
+    {
+        if (isRoundEnded) return;
+        if (playerToPlay == player1.ActorNumber)
+        {
+            player1.isTurn = true;
+            player2.isTurn = false;
+            gameController.gameLog.changeText("Turno de " + player1.nickname);
+        }
+        if (playerToPlay == player2.ActorNumber)
+        {
+            player1.isTurn = false;
+            player2.isTurn = true;
+            gameController.gameLog.changeText("Turno de " + player2.nickname);
+        }
+    }
+    public void DeclareRoundWinner(int actorNumber)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        photonView.RPC("RPC_DeclareRoundWinner", RpcTarget.AllBuffered, actorNumber);
+    }
+    [PunRPC]
+    public void RPC_DeclareRoundWinner(int actorNumber)
+    {
+        if (actorNumber == player1.ActorNumber)
+        {
+            gameController.gameLog.changeText(player1.nickname + " Venceu a rodada!");
+            // aplicar outros efeitos, animar, etc.
+        }
+        else if (actorNumber == player2.ActorNumber)
+        {
+            gameController.gameLog.changeText(player2.nickname + " Venceu a rodada!");
+        }
+
+        GDManager.roundNumber++;
+
+        ResetForNextRound();
+        StartNewRound();
+    }
+    public void ResetForNextRound()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        photonView.RPC("RPC_ResetForNextRound", RpcTarget.AllBuffered);
+    }
+    [PunRPC]
+    public void RPC_ResetForNextRound()
+    {
+        isRoundEnded = false;
+        GameObject[] cards = GameObject.FindGameObjectsWithTag("Card");
+
+        foreach (GameObject card in cards)
+        {
+            Destroy(card);
+        }   
+        //Criar um novo Deck
+    }
+    public void StartNewRound()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        photonView.RPC("RPC_StartNewRound", RpcTarget.AllBuffered);
+    }
+    [PunRPC]
+    public void RPC_StartNewRound()
+    {
+        gameController.gameLog.changeText("Iniciando uma nova rodada");        
+        //ChangeState(GameState.DEALING_CARDS);
+    }
+    public void ExecuteAfterDelay(float delayInSeconds, Action callback)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        double startTime = PhotonNetwork.Time;
+        photonView.RPC("RPC_StartDelay", RpcTarget.All, startTime, delayInSeconds);
+        delayedCallback = callback;
+    }
+
+    private Action delayedCallback;
+
+    [PunRPC]
+    private void RPC_StartDelay(double startTime, float delayInSeconds)
+    {
+        StartCoroutine(SynchronizedDelay(startTime, delayInSeconds));
+    }
+
+    private IEnumerator SynchronizedDelay(double startTime, float delayInSeconds)
+    {
+        double timeToWait = (startTime + delayInSeconds) - PhotonNetwork.Time;
+
+        if (timeToWait > 0)
+            yield return new WaitForSeconds((float)timeToWait);
+
+        delayedCallback?.Invoke();
+    }
 }
+
+/*
+    começou o jogo
+    (é o primeiro round?)
+        Sim -> escolher o primeiro jogador
+        Não -> quem foi o ultimo delaer()? -> proximo jogador sera quem o jogador a frente do dealer 
+*/

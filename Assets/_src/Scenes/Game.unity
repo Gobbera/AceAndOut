@@ -515,6 +515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a38a4d13f9417f14eacbe2e0887331a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GMPhoton: {fileID: 200199723}
   roundNumber: 0
   turnWinOrder: 
   player1Score: 0
