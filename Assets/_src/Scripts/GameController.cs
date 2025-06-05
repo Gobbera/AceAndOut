@@ -9,6 +9,10 @@ public class GameController : MonoBehaviourPunCallbacks
 {
     public GameManagerPhoton GMPhoton;
     public GameLog gameLog;
+    public GameLog scoreP1NickTag;
+    public GameLog scoreP2NickTag;
+    public GameLog scoreP1;
+    public GameLog scoreP2;
     public Deck deck;
     public Dealer dealer;
     [SerializeField] public List<Player> players = new List<Player>();

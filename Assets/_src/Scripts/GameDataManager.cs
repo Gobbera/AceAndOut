@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections.Generic;
 
 public class GameDataManager : MonoBehaviourPunCallbacks
 {
@@ -10,6 +11,26 @@ public class GameDataManager : MonoBehaviourPunCallbacks
     public int currentTurnIndex = 0;
     public int player1Score;
     public int player2Score;
+    public int turnStep;
+    public bool isFirstRound = true;
+    public bool isFirstTurn = true;
+    public bool isDraw = false;
+    public bool isRoundEnded = false;
+    public bool isRaised = false;
+    public int roundValue = 1;
+    public List<Rank> trucoOrder = new List<Rank>()
+    {
+        Rank.FOUR,
+        Rank.FIVE,
+        Rank.SIX,
+        Rank.SEVEN,
+        Rank.QUEEN,
+        Rank.JACK,
+        Rank.KING,
+        Rank.ACE,
+        Rank.TWO,
+        Rank.THREE
+    };
 
     private void Awake()
     {
@@ -21,15 +42,15 @@ public class GameDataManager : MonoBehaviourPunCallbacks
         currentTurnIndex = 0;
     }
 
-    public void incrementScore(int points, int actorNumber)
+    public void incrementScore(int actorNumber)
     {
         if (actorNumber == GMPhoton.player1.ActorNumber)
         {
-            player1Score += points;
+            player1Score += roundValue;
         }
         else if (actorNumber == GMPhoton.player2.ActorNumber)
         {
-            player2Score += points;
+            player2Score += roundValue;
         }
     }
 

@@ -146,9 +146,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   origem: {fileID: 0}
-  cardData: {fileID: 11400000, guid: 197db990ef9308249a9886b1f086be66, type: 2}
-  suit: 0
-  rank: 0
+  cardData: {fileID: 0}
+  suit: 5
+  rank: 14
   cardValue: 0
   hasPicked: 0
   isHidden: 0

@@ -11,6 +11,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public Suit suit;
     public Rank rank;
     public int cardValue;
+    public int cardCombatValue;
     public bool hasPicked;
     public bool isHidden;
     private Image imageComponent;
@@ -21,6 +22,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     void Start()
     {
         imageComponent = GetComponent<Image>();
+        
         UpdateCardProperties();
     }
     public void UpdateCardProperties()
@@ -33,6 +35,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         rank = cardData.rank;
         cardValue = cardData.cardValue;
         name = cardData.name;
+        cardCombatValue = cardValue;
+    }
+    public void UpdateToTrumpCard(int newValue)
+    {
+        cardCombatValue = newValue;
+        Debug.Log(cardData.cardName + "Agora vale" + cardCombatValue);
     }
     // EVENTS
     public void OnPointerEnter(PointerEventData eventData)
@@ -45,7 +53,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     }
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (!origem || !origem.view.IsMine || !origem.isTurn) return;
+        if (!origem || !origem.view.IsMine || !origem.isTurn || !origem.canPlay) return;
         if (isMouseOver && eventData.button == PointerEventData.InputButton.Right)
         {
             Debug.Log("Carta a ser lançada: " + rank + " " + suit);
@@ -60,6 +68,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             dropZone.UpdateCurrentCard(cardData, origem);
             Destroy(gameObject);
             OnCardLaunched?.Invoke(origem, cardData);
+            origem.handCardManager.RemoveCard(cardData);
         }
     }
 }

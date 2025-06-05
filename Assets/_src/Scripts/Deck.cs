@@ -11,6 +11,10 @@ public class Deck : MonoBehaviourPun
     {
         availableCards = new List<CardData>(cardDataList);
     }
+    public void CreateNewDeck()
+    {
+        availableCards = new List<CardData>(cardDataList);
+    }
     // Somente o Master embaralha e envia a ordem para os outros
     public int[] ShuffleAndSyncDeck()
     {
@@ -63,31 +67,53 @@ public class Deck : MonoBehaviourPun
         Debug.LogWarning("Tentativa de remover carta de um deck vazio.");
         return null;
     }
+
     public CardData GetCardById(int cardId)
     {
-        int rank = cardId / 100; // Ex: 1204 → 12 (Dama)
-        int suit = cardId % 10;  // Ex: 1204 → 4 (Clubs)
+        int rank = cardId / 100;
+        int suit = cardId % 10;
 
-        // SuitMap: 1 = Diamonds, 2 = Spades, 3 = Hearts, 4 = Clubs
-        // Agora como a ordem é [rank][suit], usamos o seguinte índice:
-        int suitOffset;
+        Suit targetSuit;
         switch (suit)
         {
-            case 1: suitOffset = 1; break; // Diamonds
-            case 2: suitOffset = 3; break; // Spades
-            case 3: suitOffset = 2; break; // Hearts
-            case 4: suitOffset = 0; break; // Clubs
-            case 5: suitOffset = 5; break; // Hidden
-            case 6: suitOffset = 6; break; // Joker
-            default: return null;
+            case 1: targetSuit = Suit.DIAMONDS; break;
+            case 2: targetSuit = Suit.SPADES; break;
+            case 3: targetSuit = Suit.HEARTS; break;
+            case 4: targetSuit = Suit.CLUBS; break;
+            default:
+                Debug.LogWarning("Suit inválido: " + suit);
+                return null;
+        }
+        Rank targetRank;
+        switch (rank)
+        {
+            case 1: targetRank = Rank.ACE; break;
+            case 2: targetRank = Rank.TWO; break;
+            case 3: targetRank = Rank.THREE; break;
+            case 4: targetRank = Rank.FOUR; break;
+            case 5: targetRank = Rank.FIVE; break;
+            case 6: targetRank = Rank.SIX; break;
+            case 7: targetRank = Rank.SEVEN; break;
+            case 11: targetRank = Rank.QUEEN; break;
+            case 12: targetRank = Rank.JACK; break;
+            case 13: targetRank = Rank.KING; break;
+            default:
+                Debug.LogWarning("Suit inválido: " + suit);
+                return null;
+        }
+        // Agora faz a busca na lista
+        foreach (CardData card in cardDataList)
+        {
+            if (card.rank == targetRank && card.suit == targetSuit)
+            {
+                return card;
+            }
         }
 
-        int index = ((rank - 1) * 4) + suitOffset;
-
-        if (index < 0 || index >= cardDataList.Count)
-            return null;
-
-        return cardDataList[index];
+        Debug.LogWarning($"Carta com rank {rank} e suit {targetSuit} não encontrada.");
+        return null;
     }
-
+        
 }
+
+

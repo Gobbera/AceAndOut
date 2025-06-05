@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Dealer : MonoBehaviour
-{
+{   
+    public GameObject TurnedCard;
+    public GameObject cardPrefab;
     public void DealCards(int cardsPerPlayer, Deck deck, List<HandCardManager> playerHands)
     {
         int totalCardsNeeded = cardsPerPlayer * playerHands.Count;
-    
+
         if (deck.GetCards().Count < totalCardsNeeded)
         {
             Debug.LogWarning("Deck não possui cartas suficientes para distribuir a quantidade desejada.");
@@ -28,5 +30,13 @@ public class Dealer : MonoBehaviour
                 }
             }
         }
+    }
+    public void TurnUpACard(CardData cardData)
+    {
+        GameObject Card = Instantiate(cardPrefab, TurnedCard.transform.position, Quaternion.identity, transform);
+        Card cardComponent = Card.GetComponent<Card>();
+        cardComponent.cardData = cardData;
+        cardComponent.UpdateCardProperties();
+        Card.transform.SetParent(TurnedCard.transform);
     }
 }

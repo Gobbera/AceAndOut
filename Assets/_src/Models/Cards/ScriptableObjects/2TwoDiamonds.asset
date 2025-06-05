@@ -16,5 +16,5 @@ MonoBehaviour:
   cardName: Two Of Diamonds
   rank: 1
   suit: 1
-  cardValue: 2
+  cardValue: 15
   cardSprite: {fileID: 21300000, guid: 080075b5c30994346a463c461b8eba85, type: 3}

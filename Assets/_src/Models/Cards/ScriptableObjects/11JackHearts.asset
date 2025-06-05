@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52ca60c9cc7c74743a99f6bae60023b4, type: 3}
   m_Name: 11JackHearts
   m_EditorClassIdentifier: 
-  key: 1103
+  key: 1203
   cardName: Jack Of Hearts
   rank: 10
   suit: 0
-  cardValue: 11
+  cardValue: 12
   cardSprite: {fileID: 21300000, guid: 9264411c286164b43a0bd62768c45a73, type: 3}

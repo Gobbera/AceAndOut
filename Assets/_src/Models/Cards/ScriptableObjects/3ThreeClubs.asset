@@ -16,5 +16,5 @@ MonoBehaviour:
   cardName: Three Of Clubs
   rank: 2
   suit: 2
-  cardValue: 3
+  cardValue: 16
   cardSprite: {fileID: 21300000, guid: a979334bfb5f2184f83ec356d33d0baf, type: 3}

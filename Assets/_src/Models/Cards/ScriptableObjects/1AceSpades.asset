@@ -16,5 +16,5 @@ MonoBehaviour:
   cardName: Ace Of Spades
   rank: 0
   suit: 3
-  cardValue: 15
+  cardValue: 14
   cardSprite: {fileID: 21300000, guid: c38b1255bc3cb4b46a6960e09cbde858, type: 3}

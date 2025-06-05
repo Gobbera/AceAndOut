@@ -16,5 +16,5 @@ MonoBehaviour:
   cardName: Ace Of Hearts
   rank: 0
   suit: 0
-  cardValue: 16
+  cardValue: 14
   cardSprite: {fileID: 21300000, guid: 8c53ecfbef829e94ab34298d6cf4998c, type: 3}

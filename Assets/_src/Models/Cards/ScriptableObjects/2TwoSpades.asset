@@ -16,5 +16,5 @@ MonoBehaviour:
   cardName: Two Of Spades
   rank: 1
   suit: 3
-  cardValue: 2
+  cardValue: 15
   cardSprite: {fileID: 21300000, guid: 2cdd5b1b45bf8ff4cacd36dffd9f4eb0, type: 3}

@@ -16,5 +16,5 @@ MonoBehaviour:
   cardName: Two Of Hearts
   rank: 1
   suit: 0
-  cardValue: 2
+  cardValue: 15
   cardSprite: {fileID: 21300000, guid: e92020a2237d302409305632360aa335, type: 3}

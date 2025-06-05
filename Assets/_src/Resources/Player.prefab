@@ -61,6 +61,8 @@ MonoBehaviour:
   nickname: 
   isDealer: 0
   isTurn: 0
+  canPlay: 0
+  isFoot: 0
 --- !u!114 &-3313685232552745333
 MonoBehaviour:
   m_ObjectHideFlags: 0

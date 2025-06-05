@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52ca60c9cc7c74743a99f6bae60023b4, type: 3}
   m_Name: 12QueenDiamonds
   m_EditorClassIdentifier: 
-  key: 1201
+  key: 1101
   cardName: Queen Of Diamonds
   rank: 11
   suit: 1
-  cardValue: 12
+  cardValue: 11
   cardSprite: {fileID: 21300000, guid: 1602c3debb8c7a3429176b4efd674835, type: 3}

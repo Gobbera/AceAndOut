@@ -72,6 +72,17 @@ MonoBehaviour:
   - RPC_DeclareRoundWinner
   - RPC_ResetForNextRound
   - RPC_StartNewRound
+  - RPC_UpdateGameLogMessage
+  - RPC_TurnUpTrumpCard
+  - RPC_SetTrumpCards
+  - TrucoState
+  - AcceptState
+  - RaiseState
+  - RunState
+  - PausePlayers
+  - PlayersCanPlay
+  - ChangeRoundValueState
+  - RPC_AnuncePlayerWinner
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

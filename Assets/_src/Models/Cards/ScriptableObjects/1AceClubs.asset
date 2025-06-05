@@ -16,5 +16,5 @@ MonoBehaviour:
   cardName: Ace Of Clubs
   rank: 0
   suit: 2
-  cardValue: 17
+  cardValue: 14
   cardSprite: {fileID: 21300000, guid: 30e6403ca7952524180b6ad7f86c2c12, type: 3}

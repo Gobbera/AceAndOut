@@ -16,5 +16,5 @@ MonoBehaviour:
   cardName: Three Of Diamonds
   rank: 2
   suit: 1
-  cardValue: 3
+  cardValue: 16
   cardSprite: {fileID: 21300000, guid: 6660caf7a6b686d4e854ee51397e6ae3, type: 3}

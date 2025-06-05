@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52ca60c9cc7c74743a99f6bae60023b4, type: 3}
   m_Name: 12QueenClubs
   m_EditorClassIdentifier: 
-  key: 1204
+  key: 1104
   cardName: Queen Of Clubs
   rank: 11
   suit: 2
-  cardValue: 12
+  cardValue: 11
   cardSprite: {fileID: 21300000, guid: 49855d4cd907e3d42941b27f6d3a1307, type: 3}
