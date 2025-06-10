@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,10 +18,10 @@ public class UIController : MonoBehaviour
         runButton.button.onClick.AddListener(OnButtonRunClick);
         raiseButton.button.onClick.AddListener(OnButtonRaiseClick);
     }
-
     private void OnButtonTrucoClick()
     {
-        Truco();
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+        Truco(actorNumber);
     }
     private void OnButtonAcceptClick()
     {
@@ -32,11 +33,12 @@ public class UIController : MonoBehaviour
     }
     private void OnButtonRaiseClick()
     {
-        Raise();
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+        Raise(actorNumber);
     }
-    public void Truco()
+    public void Truco(int actorNumber)
     {
-        GMPhoton.CallTruco();
+        GMPhoton.CallTruco(actorNumber);
     }
     private void Accept()
     {
@@ -46,8 +48,8 @@ public class UIController : MonoBehaviour
     {
         GMPhoton.CallRun();
     }
-    private void Raise()
+    private void Raise(int actorNumber)
     {
-        GMPhoton.CallRaise();
+        GMPhoton.CallRaise(actorNumber);
     }
 }

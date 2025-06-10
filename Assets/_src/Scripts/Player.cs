@@ -16,7 +16,7 @@ public class Player : MonoBehaviourPun
     public int ActorNumber;
     public string nickname;
     public bool isDealer;
-    public bool isRaiseCaller;
+    public bool isRaiseCaller = false;
     public bool isTurn = false;
     public bool canPlay = false;
     public bool isFoot = false;

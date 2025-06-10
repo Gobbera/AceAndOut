@@ -18,6 +18,7 @@ public class GameDataManager : MonoBehaviourPunCallbacks
     public bool isRoundEnded = false;
     public bool isRaised = false;
     public int roundValue = 1;
+    public bool canRaise = true;
     public List<Rank> trucoOrder = new List<Rank>()
     {
         Rank.FOUR,

@@ -83,6 +83,7 @@ MonoBehaviour:
   - PlayersCanPlay
   - ChangeRoundValueState
   - RPC_AnuncePlayerWinner
+  - RaiseCaller
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

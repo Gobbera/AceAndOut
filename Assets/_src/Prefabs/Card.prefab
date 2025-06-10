@@ -150,6 +150,7 @@ MonoBehaviour:
   suit: 5
   rank: 14
   cardValue: 0
+  cardCombatValue: 0
   hasPicked: 0
   isHidden: 0
   cardInDropZone: 0

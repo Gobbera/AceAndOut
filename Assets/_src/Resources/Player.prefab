@@ -60,6 +60,7 @@ MonoBehaviour:
   ActorNumber: 0
   nickname: 
   isDealer: 0
+  isRaiseCaller: 0
   isTurn: 0
   canPlay: 0
   isFoot: 0
