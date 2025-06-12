@@ -58,6 +58,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             Debug.Log("Carta a ser lançada: " + rank + " " + suit);
             LaunchCard();
+            SoundManager.Instance.PlayCardSlap();
         }
     }
     void LaunchCard()

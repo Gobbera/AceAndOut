@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,7 @@ public class UIController : MonoBehaviour
     [SerializeField] public UIButtons acceptButton;
     [SerializeField] public UIButtons runButton;
     [SerializeField] public UIButtons raiseButton;
+    [SerializeField] public GameObject waitingTxt;
     void Awake()
     {
         trucoButton.button.onClick.AddListener(OnButtonTrucoClick);
@@ -51,5 +53,13 @@ public class UIController : MonoBehaviour
     private void Raise(int actorNumber)
     {
         GMPhoton.CallRaise(actorNumber);
+    }
+    public void EnableWaitingTxt()
+    {
+        waitingTxt.SetActive(true);
+    }
+    public void DisableWaitingTxt()
+    {
+        waitingTxt.SetActive(false);
     }
 }

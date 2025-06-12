@@ -46,4 +46,11 @@ public class Player : MonoBehaviourPun
     {
         return playerView.IsMine ? tablePosition.clientPlayerTransform : tablePosition.remotePlayerTransform.transform;
     }
+    public void PlayerTurn()
+    {
+        if (view.IsMine)
+        {
+            SoundManager.Instance.TurnNotification();
+        }
+    }
 }

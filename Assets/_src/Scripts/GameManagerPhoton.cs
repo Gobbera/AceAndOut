@@ -123,9 +123,10 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
                 break;
             case GameState.TURN_FROM:
                 Player player = GetPlayerActed(currentTurnActor);
+                player.PlayerTurn();
                 gameController.gameLog.changeText("Turno de" + " " + player.nickname);
                 //if (!player.isRaiseCaller)
-                //{
+                //{   
                     uIController.trucoButton.EnableInteractableButton();
                 //}
                 break;
@@ -661,6 +662,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
         player1.isRaiseCaller = false;
         player2.isRaiseCaller = false;
         uIController.trucoButton.changeText("Truco");
+        uIController.DisableWaitingTxt();
         deck.CreateNewDeck();
         foreach (Player player in players)
         {
@@ -700,7 +702,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     public void RPC_AnuncePlayerWinner(int playerWinner)
     {
         string nickname = allPlayers.FirstOrDefault(p => p.ActorNumber == playerWinner)?.nickname ?? "Player";
-        gameController.gameLog.changeText("Jogador" + " " + nickname + " " + "Venceu o Jogou!");
+        gameController.gameLog.changeText("Jogador" + " " + nickname + " " + "Venceu o Jogo!");
     }
     [PunRPC]
     public void RPC_StartNewRound()
@@ -770,6 +772,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     {
         //if (!GDManager.canRaise) return;
         uIController.trucoButton.DisableButton();
+        uIController.EnableWaitingTxt();
         photonView.RPC("TrucoState", RpcTarget.OthersBuffered);
         photonView.RPC("PlayersCanPlay", RpcTarget.AllBuffered, false);
         photonView.RPC("ChangeRoundValueState", RpcTarget.AllBuffered);
@@ -778,6 +781,8 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RaiseCaller(int actorNumber)
     {
+        SoundManager.Instance.TrucoNotification();
+
         Player player = GetPlayerActed(actorNumber);
 
         if (player.isRaiseCaller)
@@ -814,6 +819,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
         uIController.acceptButton.DisableButton();
         uIController.runButton.DisableButton();
         uIController.raiseButton.DisableButton();
+        uIController.DisableWaitingTxt();
     }
     public void CallRun()
     {
@@ -834,6 +840,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RunState(int actorNumber)
     {
+        uIController.DisableWaitingTxt();
         uIController.acceptButton.DisableButton();
         uIController.runButton.DisableButton();
         uIController.raiseButton.DisableButton();
@@ -846,6 +853,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     }
     public void CallRaise(int actorNumber)
     {
+        uIController.EnableWaitingTxt();
         GDManager.canRaise = false;
         uIController.acceptButton.DisableButton();
         uIController.runButton.DisableButton();
@@ -857,6 +865,7 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RaiseState()
     {
+        SoundManager.Instance.TrucoNotification();
         //if (GDManager.canRaise)
         //{
             uIController.raiseButton.EnableButton();
@@ -898,12 +907,19 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
 }
 
 /*
+    BUG: Alternacia de Turno esta errado
+
     ?Bug, advesraio consegue trucar de alguma maneira ai mesmo se nao e o turno dele
     se estivar trucado, durante o jogo o jogador deve conseguir dar raise no valor e outro nao pode mais trucar
+    
     melhorias graficas e adicionar som
+    
     e tela de menu com tutorial
+    
     consertar a hitbox
+    
     Fazer um compnente de raise
+
 
     falta possibilidade de fugir em qualquer momento da partida
     falta mao de onze

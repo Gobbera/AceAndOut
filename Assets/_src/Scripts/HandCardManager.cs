@@ -50,7 +50,7 @@ public class HandCardManager : MonoBehaviour
         int childCount = transform.childCount;
         if (childCount == 0) return;
 
-        float cardSpacing = Mathf.Min(maxWidth / childCount, maxWidth / 10);
+        float cardSpacing = Mathf.Min(maxWidth / childCount, maxWidth / 5);
         float startX = -((childCount - 1) * cardSpacing) / 2f;
 
         for (int i = 0; i < childCount; i++)
