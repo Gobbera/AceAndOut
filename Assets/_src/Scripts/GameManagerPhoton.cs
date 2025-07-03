@@ -201,31 +201,30 @@ public class GameManagerPhoton : MonoBehaviourPunCallbacks
     }
     public void DealCards()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (!PhotonNetwork.IsMasterClient) return; //apenas o Master Cliente acessa 
 
-        int playersCount = PhotonNetwork.CurrentRoom.PlayerCount;
-        int totalCardsNeeded = cardsPerPlayer * playersCount;
-
-        if (deck.GetCards().Count < totalCardsNeeded)
+        int playersCount = PhotonNetwork.CurrentRoom.PlayerCount; //Salva quantidade de jogadores
+        int totalCardsNeeded = cardsPerPlayer * playersCount; //Salva a quatidade de cartas
+        if (deck.GetCards().Count < totalCardsNeeded) //Verificação
         {
-            Debug.LogWarning("Deck não possui cartas suficientes.");
+            Debug.LogWarning("Deck não possui cartas suficientes."); 
             return;
         }
-        int[] shuffledDeck = deck.ShuffleAndSyncDeck();
-        photonView.RPC("RPC_ReceiveShuffledDeck", RpcTarget.AllBuffered, shuffledDeck);
-        photonView.RPC("RPC_TurnUpTrumpCard", RpcTarget.AllBuffered);
+        int[] shuffledDeck = deck.ShuffleAndSyncDeck(); //Retorna uma copia do deck original embaralhado
+        photonView.RPC("RPC_ReceiveShuffledDeck", RpcTarget.AllBuffered, shuffledDeck); //Envia para o outro client as cartas embaralhadas
+        photonView.RPC("RPC_TurnUpTrumpCard", RpcTarget.AllBuffered); //Envia a carta manilha para o outro client
         foreach (Photon.Realtime.Player photonPlayer in PhotonNetwork.PlayerList)
         {
-            photonView.RPC("RPC_ReceiveCards", photonPlayer, photonPlayer.ActorNumber);
+            photonView.RPC("RPC_ReceiveCards", photonPlayer, photonPlayer.ActorNumber); //Distribui as cartas
         }
-        DetermineCurrentTurnPlayer();
+        DetermineCurrentTurnPlayer(); //Determina quem joga
     }
-    [PunRPC]
+    [PunRPC] //Tag para as RPCs
     public void RPC_TurnUpTrumpCard()
     {
-        trumpCard = deck.availableCards[0];
-        dealer.TurnUpACard(trumpCard);
-        photonView.RPC("RPC_RemoveCard", RpcTarget.AllBuffered);
+        trumpCard = deck.availableCards[0]; //Pega a carta do "topo do baralho"
+        dealer.TurnUpACard(trumpCard); //"Coloca na mesa"
+        photonView.RPC("RPC_RemoveCard", RpcTarget.AllBuffered); //Remove a carta em ambos os clients
     }
     public void SetTrumpCards()
     {
